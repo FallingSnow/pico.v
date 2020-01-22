@@ -94,3 +94,31 @@ pub fn (r mut Response) end() int {
 	}
 	return n
 }
+
+[inline]
+pub fn (r mut Response) http_ok_plain(s string) &Response {
+	mut buf := r.buf
+	cpy_str(buf, "HTTP/1.1 200 OK\r\nServer: V\r\nDate: ")
+	cpy(buf + 34, r.date, 29)
+	cpy_str(buf + 63, "\r\nContent-Type: text/plain\r\nContent-Length: ")
+	buf += 107
+	buf += C.u64toa(buf, s.len)
+	buf += cpy_str(buf, "\r\n\r\n")
+	buf += cpy_str(buf, s)
+	r.buf = buf
+	return r
+}
+
+[inline]
+pub fn (r mut Response) http_ok_json(s string) &Response {
+	mut buf := r.buf
+	cpy_str(buf, "HTTP/1.1 200 OK\r\nServer: V\r\nDate: ")
+	cpy(buf + 34, r.date, 29)
+	cpy_str(buf + 63, "\r\nContent-Type: application/json\r\nContent-Length: ")
+	buf += 113
+	buf += C.u64toa(buf, s.len)
+	buf += cpy_str(buf, "\r\n\r\n")
+	buf += cpy_str(buf, s)
+	r.buf = buf
+	return r
+}
